@@ -1,0 +1,348 @@
+# skill.yaml
+# Skill: Executive briefing on latest advancements in Quantum Cryptography
+# Focus: extensive web research using only trusted research + reputable news publications.
+
+skill:
+  id: "skill.quantum_crypto_exec_brief"
+  name: "Quantum Cryptography Progress — Executive Brief"
+  version: "1.0.0"
+  description: >
+    Produces a C-suite-friendly briefing on the latest advancements in quantum cryptography
+    (QKD, PQC transition impacts where relevant, quantum-safe networks, hardware, standards),
+    based on extensive web research restricted to trusted research publications and reputable news.
+
+  triggers:
+    - "latest advancements in quantum cryptography"
+    - "quantum cryptography update"
+    - "QKD progress"
+    - "quantum key distribution breakthrough"
+    - "quantum-safe communications status"
+    - "executive briefing quantum cryptography"
+
+  inputs:
+    topic_scope:
+      type: string
+      required: false
+      default: "quantum cryptography"
+      description: "Optional narrowing, e.g., 'QKD satellites', 'device-independent QKD', 'QRNG', 'QKD networks'."
+    time_window_days:
+      type: integer
+      required: false
+      default: 90
+      description: "Prefer sources published within this window unless a key milestone is older but still decisive."
+    geography_focus:
+      type: string
+      required: false
+      default: "global"
+      enum: ["global", "north_america", "europe", "asia_pacific"]
+    audience:
+      type: string
+      required: false
+      default: "executive"
+      enum: ["executive", "technical_executive", "board"]
+    max_sources:
+      type: integer
+      required: false
+      default: 10
+    include_pqc_context:
+      type: boolean
+      required: false
+      default: true
+      description: "Include short context on PQC (post-quantum cryptography) only as it affects strategy/timelines."
+    depth:
+      type: string
+      required: false
+      default: "standard"
+      enum: ["standard", "deep_dive"]
+      description: "Deep dive expands technical notes, standards, and competitive landscape."
+
+  tools_allowed:
+    - web.search_query
+    - web.open
+    - web.find
+
+  # Strict source policy: ONLY these categories are allowed.
+  # If a source cannot be confidently categorized, it must not be used.
+  allowed_sources:
+    research_publications:
+      - "Nature / Nature Research portfolio"
+      - "Science / AAAS"
+      - "Physical Review Letters / APS journals"
+      - "IEEE Xplore (journals, conferences)"
+      - "ACM Digital Library (selected cryptography/security venues)"
+      - "SpringerLink (selected journals)"
+      - "Wiley Online Library (selected journals)"
+      - "OSA/Optica Publishing Group"
+      - "arXiv (ONLY if supported by an institutional press release, peer-reviewed follow-up, or independent expert coverage)"
+    standards_and_official:
+      - "NIST"
+      - "ETSI"
+      - "ISO/IEC"
+      - "IETF (RFCs, drafts with clear status)"
+      - "CEN/CENELEC (where relevant)"
+      - "National labs (e.g., NIST labs, DOE labs) official sites"
+      - "Major universities / research institutes official announcements"
+    reputable_news_and_analysis:
+      - "Reuters"
+      - "Associated Press"
+      - "Financial Times"
+      - "The Economist"
+      - "Wall Street Journal"
+      - "BBC"
+      - "Bloomberg"
+      - "MIT Technology Review"
+      - "IEEE Spectrum"
+      - "Nature News (journalism side)"
+      - "Science News (journalism side)"
+  disallowed_sources:
+    - "Unknown blogs, self-published Medium posts, SEO farms"
+    - "Unverifiable press-release syndication sites"
+    - "Vendor-only claims without independent confirmation"
+    - "Social media threads as primary evidence"
+    - "Paywalled sources are allowed ONLY if key facts are accessible via abstract/press summary; otherwise omit"
+
+  constraints:
+    - "Use citations for non-trivial factual claims (dates, metrics, records, experimental results, deployments)."
+    - "Do not fabricate performance numbers (distance, key rate, loss, QBER, security model), timelines, or quotes."
+    - "No more than 25 words quoted verbatim from any single source."
+    - "Separate: (a) peer-reviewed results, (b) preprints, (c) product announcements, (d) standards updates."
+    - "Clearly label maturity: lab demo vs field trial vs commercial deployment."
+    - "If evidence conflicts, present both and explain why."
+    - "Prefer primary sources (paper/standard) over secondary reporting when possible."
+    - "Explicitly state uncertainty when a claim cannot be independently verified."
+    - "Summaries must be readable by non-technical executives; deep technical detail goes into an appendix."
+
+  procedure:
+    - step: "Define scope"
+      action: >
+        Interpret topic_scope and decide subtopics to cover:
+        QKD (fiber/free-space/satellite), DI-QKD, CV-QKD, MDI-QKD, QRNG,
+        quantum repeaters/memories, integrated photonics, network deployments,
+        security proofs/assumptions, certification/standards, cost & ops realities,
+        and (optionally) PQC implications for hybrid strategies.
+      output: "Subtopic checklist"
+
+    - step: "Extensive source gathering"
+      action: >
+        Run multiple web.search_query calls using:
+        - general query (topic_scope + 'breakthrough' + 'field trial' + 'standard')
+        - key acronyms (QKD, MDI-QKD, DI-QKD, CV-QKD, QRNG, quantum repeater)
+        - geography_focus filters and recency (time_window_days)
+        Collect 20–40 candidates.
+      output: "Candidate pool (20–40 items)"
+
+    - step: "Source vetting (hard gate)"
+      action: >
+        For each candidate: classify as allowed/disallowed.
+        Keep ONLY allowed sources. Remove vendor-only claims unless independently validated.
+      output: "Vetted pool (10–20 items)"
+
+    - step: "Shortlist selection"
+      action: >
+        Select up to max_sources with diversity across:
+        - peer-reviewed breakthroughs (2–4)
+        - real-world deployments/field trials (2–3)
+        - standards/official roadmap updates (1–3)
+        - reputable news synthesis (1–2)
+      output: "Shortlist (<= max_sources)"
+
+    - step: "Extraction + normalization"
+      action: >
+        Open each shortlisted source and extract:
+        - what happened (one sentence)
+        - date + org(s)
+        - why it matters (business/security)
+        - maturity level
+        - measurable claims (distance, key rate, security model, cost/ops hints)
+        Normalize units and define terms in a glossary.
+      output: "Evidence table + glossary"
+
+    - step: "Synthesis for executives"
+      action: >
+        Produce a briefing with:
+        - top headline
+        - 5–9 key developments
+        - what changed vs last quarter
+        - implications (security, telecom, finance, gov, critical infra)
+        - competitive landscape snapshot
+        - standards/regulatory notes
+        - recommended actions (risk-based)
+        - risks/unknowns (e.g., side channels, deployment economics, trust models)
+      output: "Executive brief draft"
+
+    - step: "Quality checks"
+      action: >
+        Ensure every key claim has a citation.
+        Ensure no disallowed sources were used.
+        Ensure separation of peer-reviewed vs preprint vs product.
+        Ensure clarity: minimal jargon in main body.
+      output: "Final brief"
+
+  output_schema:
+    type: object
+    required:
+      - "headline"
+      - "executive_summary"
+      - "key_developments"
+      - "implications"
+      - "recommended_actions"
+      - "sources"
+    properties:
+      headline:
+        type: string
+
+      executive_summary:
+        type: string
+        description: "4–7 sentences, plain language, decision-relevant."
+
+      key_developments:
+        type: array
+        description: "Bulleted developments with maturity + evidence tags."
+        items:
+          type: object
+          required: ["title", "what_happened", "why_it_matters", "maturity", "evidence_type", "citations"]
+          properties:
+            title: { type: string }
+            what_happened: { type: string }
+            why_it_matters: { type: string }
+            maturity:
+              type: string
+              enum: ["lab_demo", "field_trial", "pilot_deployment", "commercial_deployment", "standards_update"]
+            evidence_type:
+              type: string
+              enum: ["peer_reviewed", "preprint_supported", "official_standard", "reputable_news_synthesis"]
+            metrics:
+              type: object
+              description: "Optional; include only if explicitly supported by sources."
+              properties:
+                distance_km: { type: number }
+                key_rate: { type: string }
+                security_model: { type: string }
+                medium: { type: string, enum: ["fiber", "free_space", "satellite", "hybrid", "unspecified"] }
+            citations:
+              type: array
+              items: { type: string }
+
+      timeline:
+        type: array
+        required: false
+        items:
+          type: object
+          properties:
+            date: { type: string }
+            event: { type: string }
+            citations:
+              type: array
+              items: { type: string }
+
+      implications:
+        type: object
+        required: ["who_is_affected", "so_what", "time_horizon"]
+        properties:
+          who_is_affected:
+            type: array
+            items: { type: string }
+          so_what:
+            type: array
+            items: { type: string }
+          time_horizon:
+            type: string
+            enum: ["0_12_months", "1_3_years", "3_7_years", "7_plus_years"]
+
+      recommended_actions:
+        type: array
+        description: "Practical steps; no hype."
+        items:
+          type: object
+          required: ["action", "owner", "priority", "rationale"]
+          properties:
+            action: { type: string }
+            owner: { type: string, enum: ["CISO", "CTO", "CIO", "Network", "GRC", "R&D", "Procurement"] }
+            priority: { type: string, enum: ["high", "medium", "low"] }
+            rationale: { type: string }
+            dependencies:
+              type: array
+              items: { type: string }
+
+      risks_and_unknowns:
+        type: array
+        required: false
+        items: { type: string }
+
+      appendix:
+        type: object
+        required: false
+        properties:
+          glossary:
+            type: array
+            items:
+              type: object
+              properties:
+                term: { type: string }
+                definition: { type: string }
+          technical_notes:
+            type: array
+            items: { type: string }
+
+      sources:
+        type: array
+        items:
+          type: object
+          required: ["title", "publisher", "url", "published_date", "source_class"]
+          properties:
+            title: { type: string }
+            publisher: { type: string }
+            url: { type: string }
+            published_date: { type: string }
+            source_class:
+              type: string
+              enum: ["research_publication", "standards_official", "reputable_news"]
+
+  examples:
+    - input:
+        topic_scope: "quantum cryptography (QKD networks + device-independent QKD)"
+        time_window_days: 90
+        geography_focus: "global"
+        audience: "executive"
+        max_sources: 10
+        include_pqc_context: true
+        depth: "standard"
+      output_example:
+        headline: "Quantum cryptography: recent advances, what’s real in the field, and what to watch next"
+        executive_summary: >
+          Over the last quarter, quantum cryptography progress has concentrated in three areas:
+          higher-performance QKD demonstrations, more pragmatic network deployments, and clearer
+          standards/roadmaps. Most breakthroughs remain constrained by cost, integration, and
+          operational complexity, but several field trials are narrowing the gap to repeatable
+          deployments in metro-scale networks. Near-term strategy should emphasize hybrid
+          security roadmaps and evidence-based pilots rather than broad rollouts.
+        key_developments:
+          - title: "Peer-reviewed QKD performance milestone"
+            what_happened: "A research team reported a new experimental result improving a key metric under defined assumptions."
+            why_it_matters: "Signals incremental feasibility improvements; informs vendor roadmaps."
+            maturity: "lab_demo"
+            evidence_type: "peer_reviewed"
+            citations: ["(example) Nature 2026-01-xx", "(example) APS 2026-01-xx"]
+          - title: "Carrier/utility field trial update"
+            what_happened: "A telecom/critical-infra operator published results from a multi-node QKD field trial."
+            why_it_matters: "Highlights operational constraints: calibration, uptime, and integration with existing links."
+            maturity: "field_trial"
+            evidence_type: "reputable_news_synthesis"
+            citations: ["(example) Reuters 2026-01-xx", "(example) operator report 2026-01-xx"]
+        implications:
+          who_is_affected: ["Telecom operators", "Financial institutions", "Government agencies", "Critical infrastructure"]
+          so_what:
+            - "Pilot planning should focus on specific high-value links and measurable operational KPIs."
+            - "Procurement should require independent security validation and clear threat models."
+          time_horizon: "1_3_years"
+        recommended_actions:
+          - action: "Define 2–3 high-value link candidates for a quantum-secure pilot and success metrics (uptime, key rate stability, integration effort)."
+            owner: "CISO"
+            priority: "high"
+            rationale: "Turns hype into a measurable security and operational evaluation."
+        sources:
+          - title: "Example peer-reviewed paper title"
+            publisher: "Nature"
+            url: "https://example.com"
+            published_date: "2026-01-15"
+            source_class: "research_publication"
